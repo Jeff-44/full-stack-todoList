@@ -1,0 +1,18 @@
+<%- include("partials/header") %>
+
+    <h1>Today's Tasks</h1>
+
+        if(tasks.length === 0){
+
+            <p>No tasks available</p>
+            
+        } else{}
+    <ul>
+        <% tasks.forEach(task =>{ %>
+          <li><input type="checkbox" name="" id=""><%= task %><hr></li>
+        <% }) %>
+    </ul>
+
+
+
+<%- include("partials/footer") %>
