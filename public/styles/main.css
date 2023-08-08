@@ -1,0 +1,14 @@
+h1{
+    text-align: center;
+}
+
+.content{
+    width: 50%;
+    border: 2px solid rgb(22, 231, 22);
+    margin: 0 auto;
+}
+
+.line-through{
+    text-decoration-line: line-through;
+    color: red;
+}
