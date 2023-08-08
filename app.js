@@ -62,6 +62,24 @@ app.post("/", (req, res)=>{
     res.redirect("/");
 });
 
+
+app.post("/delete", async (req, res)=>{
+    try {
+        const deletedTask = await Task.findByIdAndDelete(req.body.checkbox);
+        console.log("Deleted Successfully");
+    } catch (error) {
+        console.log(error);
+    }
+    res.redirect("/");
+});
+
+
+// USING ROUTE PARAMETERS
+app.get("/:name",  (req, res)=>{
+    let result = undefined;
+    res.render("index.ejs", {tasks: result});
+});
+
 app.listen(port, ()=>{
     console.log(`Server running on port ${port}`);
 });

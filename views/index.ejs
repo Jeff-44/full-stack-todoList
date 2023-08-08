@@ -3,7 +3,7 @@
     <h1>Today's Tasks</h1>
 
     <div class="content">
-        <% if(tasks.length === 0 || locals.tasks === undefined){  %>
+        <% if(locals.tasks === undefined || tasks.length === 0){  %>
 
             <p>No tasks available <hr></p>
             
@@ -11,7 +11,13 @@
 
             <ul>
                 <% tasks.forEach(task =>{ %>
-                <li><input type="checkbox" class="" name="" id=""><%= task.taskName %> <span style="display: none;"><a href="/<% task._id %>">Delete</a></span><hr></li>
+                    <form action="/delete" method="POST">
+                        <li>
+                            <input type="checkbox" class="" value="<%= task._id %>"
+                                name="checkbox" onchange="this.form.submit()" id="">
+                            <%= task.taskName %><hr>
+                        </li>
+                    </form>
                 <% }) %>
             </ul>
 
