@@ -37,29 +37,60 @@ app.get("/", async (req, res)=>{
     try {
         const result = await Task.find();
         console.log(result);
-        res.render("index.ejs", {tasks: result});
+        res.render("index.ejs", 
+        {
+            listName: "Today's Tasks",
+            tasks: result
+        });
     } catch (error) {
         console.log("Error: " + error.message);
     }
 });
 
-app.post("/", (req, res)=>{
+app.post("/", async (req, res)=>{
+    
+    const ListTitle = req.body.ListTitle;
+    
+    if(ListTitle === "Today's Tasks"){
 
-    try {
+        try {
+
+            const task = new Task({
+                taskName: req.body.task
+            });
+    
+            task.save();
+            res.status(200);
+    
+        } catch (error) {
+            console.log("Error in registering task: " + error.message);
+            res.status(500);
+        }
+    
+        res.redirect("/");
+
+    }else{
+
+        const postedList = await List.findOne({listName: ListTitle});
+        console.log(postedList);
+        
 
         const task = new Task({
             taskName: req.body.task
         });
+        
+        postedList.tasks.push(task);
 
-        task.save();
-        res.status(200);
+        console.log(postedList);
+        // res.send(postedList);
 
-    } catch (error) {
-        console.log("Error in registering task: " + error.message);
-        res.status(500);
+        res.render("index.ejs", {
+            listName: postedList.listName,
+            tasks: postedList.tasks
+        });
     }
 
-    res.redirect("/");
+
 });
 
 
@@ -93,7 +124,7 @@ app.get("/:customListName", async (req, res)=>{
     try {
         const existingList = await List.findOne({listName: listName});
 
-        if(existingList === null){
+        if(!existingList){
             const newList = new List({
                 listName: listName,
                 tasks: []
@@ -104,10 +135,10 @@ app.get("/:customListName", async (req, res)=>{
         }else{
 
             console.log(existingList);
-            // res.render("index.ejs", {
-            //     listName: existingList.listName,
-            //     tasks: existingList.tasks
-            // });
+            res.render("index.ejs", {
+                listName: existingList.listName,
+                tasks: existingList.tasks
+            });
         }
 
     } catch (error) {
