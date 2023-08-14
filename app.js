@@ -51,14 +51,14 @@ app.post("/", async (req, res)=>{
     
     const ListTitle = req.body.ListTitle;
     
+    const task = new Task({
+        taskName: req.body.task
+    });
+
     if(ListTitle === "Today's Tasks"){
 
         try {
 
-            const task = new Task({
-                taskName: req.body.task
-            });
-    
             task.save();
             res.status(200);
     
@@ -73,24 +73,13 @@ app.post("/", async (req, res)=>{
 
         const postedList = await List.findOne({listName: ListTitle});
         console.log(postedList);
-        
-
-        const task = new Task({
-            taskName: req.body.task
-        });
-        
+                
         postedList.tasks.push(task);
+        postedList.save();
 
         console.log(postedList);
-        // res.send(postedList);
-
-        res.render("index.ejs", {
-            listName: postedList.listName,
-            tasks: postedList.tasks
-        });
+        res.redirect("/" + ListTitle);
     }
-
-
 });
 
 
