@@ -1,9 +1,9 @@
 import express from "express";
 import mongoose from "mongoose";
+import _ from "lodash";
 
 const app = express();
 const port = 3000;
-
 // MIDDLEWARES
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
@@ -84,13 +84,32 @@ app.post("/", async (req, res)=>{
 
 
 app.post("/delete", async (req, res)=>{
-    try {
-        const deletedTask = await Task.findByIdAndDelete(req.body.checkbox);
-        console.log("Deleted Successfully");
-    } catch (error) {
-        console.log(error);
+    
+    const ListTitle = req.body.ListTitle;
+    const task_id = req.body.checkbox;
+
+    if(ListTitle === "Today's Tasks"){
+        try {
+            const deletedTaskID = await Task.findByIdAndDelete(task_id);
+            console.log("Deleted Successfully");
+        } catch (error) {
+            console.log(error);
+        }
+
+        res.redirect("/");
+    }else{
+
+        try {
+            
+            const ListDeletedTask = await List.findOneAndUpdate({listName: ListTitle}, {$pull: {tasks: {_id: task_id}}}, {
+                new: true
+            });
+            res.redirect("/" + ListTitle); 
+        } catch (error) {
+            console.log("Error: " + error);
+        }
     }
-    res.redirect("/");
+    
 });
 
 // USING ROUTE PARAMETERS
@@ -98,7 +117,7 @@ app.post("/delete", async (req, res)=>{
 
 const listSchema = new mongoose.Schema({
     listName: String,
-    tasks: Array
+    tasks: [taskSchema]
 });
 
 const List = mongoose.model("List", listSchema);
@@ -107,7 +126,7 @@ const List = mongoose.model("List", listSchema);
 app.get("/:customListName", async (req, res)=>{
     
     // CHECK IF LIST EXIST IN DATABASE
-    const listName = req.params.customListName;
+    const listName = _.capitalize(req.params.customListName);
 
     // console.log(listName);
     try {
@@ -135,11 +154,6 @@ app.get("/:customListName", async (req, res)=>{
         res.status(500);
     }
 });
-
-
-
-
-
 
 
 app.listen(port, ()=>{

@@ -17,6 +17,7 @@
                                 name="checkbox" onchange="this.form.submit()" id="">
                             <%= task.taskName %><hr>
                         </li>
+                        <input type="hidden" name="ListTitle" value="<%= listName %>">
                     </form>
                 <% }) %>
             </ul>
